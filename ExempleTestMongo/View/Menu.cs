@@ -1,6 +1,7 @@
-﻿using ExempleTestMongo.Entities;
-using ExempleTestMongo.Interfaces;
+﻿using ExempleTestMongo.DTOs;
 using ExempleTestMongo.Entities;
+using ExempleTestMongo.Entities;
+using ExempleTestMongo.Interfaces;
 using ExempleTestMongo.Interfaces;
 
 namespace ExempleTestMongo.View
@@ -34,19 +35,19 @@ namespace ExempleTestMongo.View
                 switch (option)
                 {
                     case "1":
-                        AddProduct();
+                        MenuAddProduct();
                         break;
                     case "2":
-                        ListProducts();
+                        MenuListProducts();
                         break;
                     case "3":
-                        GetById();
+                        MenuGetById();
                         break;
                     case "4":
-                        UpdateProduct();
+                        MenuUpdateProduct();
                         break;
                     case "5":
-                        DeleteProduct();
+                        MenuDeleteProduct();
                         break;
                     case "0":
                         running = false;
@@ -58,7 +59,7 @@ namespace ExempleTestMongo.View
             }
         }
 
-        private void AddProduct()
+        private void MenuAddProduct()
         {
             Console.Write("Nome: ");
             string name = Console.ReadLine();
@@ -69,19 +70,19 @@ namespace ExempleTestMongo.View
             Console.Write("Estoque: ");
             int stock = int.Parse(Console.ReadLine());
 
-            var product = new Product
+            var newDto = new ProductRequestDto
             {
                 Name = name,
                 Price = price,
                 Stock = stock
             };
 
-            _productService.Add(product);
+            _productService.Add(newDto);
 
             Console.WriteLine("Produto adicionado!");
         }
 
-        private void ListProducts()
+        private void MenuListProducts()
         {
             var products = _productService.GetAll();
 
@@ -91,26 +92,26 @@ namespace ExempleTestMongo.View
             }
         }
 
-        private void GetById()
+        private void MenuGetById()
         {
             Console.Write("Digite o ID: ");
-            Guid id = Guid.Parse(Console.ReadLine());
+            string id = Console.ReadLine();
 
-            var product = _productService.GetById(id);
+            var productDto = _productService.GetById(id);
 
-            if (product == null)
+            if (productDto == null)
             {
                 Console.WriteLine("Produto não encontrado.");
                 return;
             }
 
-            Console.WriteLine($"{product.Name} - R$ {product.Price}");
+            Console.WriteLine($"{productDto.Name} - R$ {productDto.Price}");
         }
 
-        private void UpdateProduct()
+        private void MenuUpdateProduct()
         {
             Console.Write("ID do produto: ");
-            Guid id = Guid.Parse(Console.ReadLine());
+            string id = Console.ReadLine();
 
             Console.Write("Novo nome: ");
             string name = Console.ReadLine();
@@ -121,23 +122,22 @@ namespace ExempleTestMongo.View
             Console.Write("Novo estoque: ");
             int stock = int.Parse(Console.ReadLine());
 
-            var product = new Product
+            var productDto = new ProductRequestDto
             {
-                Id = id,
                 Name = name,
                 Price = price,
                 Stock = stock
             };
 
-            _productService.Update(product);
+            _productService.Update(id,productDto);
 
             Console.WriteLine("Produto atualizado!");
         }
 
-        private void DeleteProduct()
+        private void MenuDeleteProduct()
         {
             Console.Write("ID do produto: ");
-            Guid id = Guid.Parse(Console.ReadLine());
+            string id = Console.ReadLine();
 
             _productService.Delete(id);
 

@@ -1,4 +1,7 @@
-﻿using ExempleTestMongo.Entities;
+﻿using ExempleTestMongo.Data;
+using ExempleTestMongo.Data.Repositories;
+using ExempleTestMongo.DTOs;
+using ExempleTestMongo.Entities;
 using ExempleTestMongo.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -6,45 +9,68 @@ using System.Text;
 
 namespace ExempleTestMongo.Services
 {
-    internal class ProductService : IProductService
+    public class ProductService : IProductService
     {
-        public readonly List<Product> _products = new();
+        private readonly IRepository<Product> _repository;
 
-        public void Add(Product product)
+        public ProductService(IRepository<Product> repository)
         {
-            _products.Add(product);
+            _repository = repository;
         }
 
-        public List<Product> GetAll()
+        public void Add(ProductRequestDto dto)
         {
-            return _products;
+            var product = new Product
+            {
+                Name = dto.Name,
+                Price = dto.Price,
+                Stock = dto.Stock
+            };
+            _repository.Create(product);
         }
 
-        public Product GetById(Guid id)
+        public List<ProductResponseDto> GetAll()
         {
-            return _products.FirstOrDefault(p => p.Id == id);
+            var products = _repository.GetAll();
+
+            return products.Select(p => new ProductResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price,
+                Stock = p.Stock
+            }).ToList();
         }
 
-        public void Update(Product product)
+        public ProductResponseDto GetById(string id)
         {
-            var existing = _products.FirstOrDefault(p => p.Id == product.Id);
+            var p = _repository.GetById(id.ToString());
+            if (p == null) return null;
 
-            if (existing == null)
-                throw new Exception("Produto não encontrado");
-
-            existing.Name = product.Name;
-            existing.Price = product.Price;
-            existing.Stock = product.Stock;
+            return new ProductResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price,
+                Stock = p.Stock
+            };
         }
 
-        public void Delete(Guid id)
+        public void Update(string id, ProductRequestDto dto)
         {
-            var product = _products.FirstOrDefault(p => p.Id == id);
+            var product = new Product
+            {
+                Id = id,
+                Name = dto.Name,
+                Price = dto.Price,
+                Stock = dto.Stock
+            };
+            _repository.Update(id.ToString(), product);
+        }
 
-            if (product == null)
-                throw new Exception("Produto não encontrado");
-
-            _products.Remove(product);
+        public void Delete(string id)
+        {
+            _repository.Delete(id.ToString());
         }
     }
 }
