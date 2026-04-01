@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="ExempleTestMongo.Tests/ExempleTestMongo.Tests.csproj" Id="60452250-d7bf-4481-86d2-baf75f3d379b" />
   <Project Path="ExempleTestMongo/ExempleTestMongo.csproj" />
   <Project Path="WebApiTest/WebApiTest.csproj" Id="8f3408fe-ae37-4b27-81a2-b08bc186497f" />
 </Solution>
